@@ -680,7 +680,9 @@ export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof User
 
 export const PostScalarFieldEnum = {
   id: 'id',
+  title: 'title',
   content: 'content',
+  visibility: 'visibility',
   createdAt: 'createdAt',
   authorId: 'authorId'
 } as const
@@ -747,6 +749,20 @@ export type EnumUserKindFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaM
  * Reference to a field of type 'UserKind[]'
  */
 export type ListEnumUserKindFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserKind[]'>
+    
+
+
+/**
+ * Reference to a field of type 'PostVisibility'
+ */
+export type EnumPostVisibilityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PostVisibility'>
+    
+
+
+/**
+ * Reference to a field of type 'PostVisibility[]'
+ */
+export type ListEnumPostVisibilityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PostVisibility[]'>
     
 
 

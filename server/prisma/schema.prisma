@@ -13,12 +13,12 @@ datasource db {
 }
 
 enum UserKind {
-  reader
+  admin
   writer
 }
 
 model User {
-  id       String    @id @db.Uuid
+  id       String    @id @default(uuid()) @db.Uuid
   name     String
   email    String
   password String
@@ -27,17 +27,24 @@ model User {
   comments Comment[]
 }
 
+enum PostVisibility {
+  public
+  private
+}
+
 model Post {
-  id        String    @id @db.Uuid
-  content   String
-  createdAt DateTime  @default(now())
-  author    User      @relation(fields: [authorId], references: [id])
-  authorId  String    @db.Uuid
-  comments  Comment[]
+  id         String         @id @default(uuid()) @db.Uuid
+  title      String
+  content    String
+  visibility PostVisibility
+  createdAt  DateTime       @default(now())
+  author     User           @relation(fields: [authorId], references: [id])
+  authorId   String         @db.Uuid
+  comments   Comment[]
 }
 
 model Comment {
-  id           String   @id @db.Uuid
+  id           String   @id @default(uuid()) @db.Uuid
   content      String
   createdAt    DateTime @default(now())
   editedAt     DateTime @default(now())

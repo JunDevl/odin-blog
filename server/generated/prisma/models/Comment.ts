@@ -244,7 +244,7 @@ export type CommentScalarWhereWithAggregatesInput = {
 }
 
 export type CommentCreateInput = {
-  id: string
+  id?: string
   content: string
   createdAt?: Date | string
   editedAt?: Date | string
@@ -253,7 +253,7 @@ export type CommentCreateInput = {
 }
 
 export type CommentUncheckedCreateInput = {
-  id: string
+  id?: string
   content: string
   createdAt?: Date | string
   editedAt?: Date | string
@@ -280,7 +280,7 @@ export type CommentUncheckedUpdateInput = {
 }
 
 export type CommentCreateManyInput = {
-  id: string
+  id?: string
   content: string
   createdAt?: Date | string
   editedAt?: Date | string
@@ -426,7 +426,7 @@ export type CommentUncheckedUpdateManyWithoutOriginPostNestedInput = {
 }
 
 export type CommentCreateWithoutAuthorInput = {
-  id: string
+  id?: string
   content: string
   createdAt?: Date | string
   editedAt?: Date | string
@@ -434,7 +434,7 @@ export type CommentCreateWithoutAuthorInput = {
 }
 
 export type CommentUncheckedCreateWithoutAuthorInput = {
-  id: string
+  id?: string
   content: string
   createdAt?: Date | string
   editedAt?: Date | string
@@ -480,7 +480,7 @@ export type CommentScalarWhereInput = {
 }
 
 export type CommentCreateWithoutOriginPostInput = {
-  id: string
+  id?: string
   content: string
   createdAt?: Date | string
   editedAt?: Date | string
@@ -488,7 +488,7 @@ export type CommentCreateWithoutOriginPostInput = {
 }
 
 export type CommentUncheckedCreateWithoutOriginPostInput = {
-  id: string
+  id?: string
   content: string
   createdAt?: Date | string
   editedAt?: Date | string
@@ -522,7 +522,7 @@ export type CommentUpdateManyWithWhereWithoutOriginPostInput = {
 }
 
 export type CommentCreateManyAuthorInput = {
-  id: string
+  id?: string
   content: string
   createdAt?: Date | string
   editedAt?: Date | string
@@ -554,7 +554,7 @@ export type CommentUncheckedUpdateManyWithoutAuthorInput = {
 }
 
 export type CommentCreateManyOriginPostInput = {
-  id: string
+  id?: string
   content: string
   createdAt?: Date | string
   editedAt?: Date | string

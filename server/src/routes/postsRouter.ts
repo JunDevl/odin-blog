@@ -1,7 +1,14 @@
-import { Router } from "express";
+import { Router, type RequestHandler } from "express";
 
 const postsRouter = Router();
 const commentsRouter = Router();
+
+const verifyJwtToken: RequestHandler = (req, res, next) => {
+
+  return next();
+}
+
+postsRouter.use(verifyJwtToken);
 
 postsRouter.route("/")
   .get(() => {}) // get all posts

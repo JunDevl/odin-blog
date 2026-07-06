@@ -5,9 +5,8 @@ import cors from "cors";
 import express, { Router } from "express";
 import prisma from "../lib/prisma.ts";
 import passport from "passport";
-import LocalStrategy from "passport-local";
+import Jwt from "passport-jwt";
 import argon2 from "argon2";
-import jwt from "jsonwebtoken";
 import usersRouter from "./routes/usersRouter.ts";
 import postsRouter from "./routes/postsRouter.ts";
 
@@ -26,47 +25,33 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // TODO:
-passport.use(new LocalStrategy.Strategy(
+passport.use(new Jwt.Strategy(
   {
-    usernameField: "email",
-    passwordField: "password"
+    jwtFromRequest: Jwt.ExtractJwt.fromAuthHeaderAsBearerToken(),
+    secretOrKey: process.env["SECRET_KEY"]!
   },
-  async (email, password, done) => {
-  try {
-    const user = await prisma.user.findUnique({
-      where: { email }
-    });
+  async (jwt_payload, done) => {
+    const { email, password } = jwt_payload;
 
-    if (!user) return done(null, false, { message: "Incorrect email" });
+    try {
+      const user = await prisma.user.findUnique({
+        where: {
+          id: undefined,
+          email
+        }
+      });
 
-    const validated = await argon2.verify(user.password, password);
-    
-    if (!validated) return done(null, false, { message: "Incorrect password" });
+      if (!user) return done(null, false, { message: "Incorrect email" });
 
-    return done(null, user);
-  } catch(err) {
-    return done(err);
-  }
+      const validated = await argon2.verify(user.password, password);
+      
+      if (!validated) return done(null, false, { message: "Incorrect password" });
+
+      return done(null, user);
+    } catch(err) {
+      return done(err, false);
+    }
 }))
-
-// TODO:
-passport.serializeUser((user, done) => {
-  // done(null, (user as any).id);
-});
-
-// TODO:
-passport.deserializeUser(async (id: string, done) => {
-  // try {
-  //   const user = await prisma.user.findUnique({
-  //     where: { id }
-  //   });
-
-  //   app.locals.user = user;
-  //   done(null, user);
-  // } catch(err) {
-  //   done(err);
-  // }
-});
 
 app.use("/api", apiRouter);
 

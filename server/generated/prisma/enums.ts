@@ -10,8 +10,16 @@
 */
 
 export const UserKind = {
-  reader: 'reader',
+  admin: 'admin',
   writer: 'writer'
 } as const
 
 export type UserKind = (typeof UserKind)[keyof typeof UserKind]
+
+
+export const PostVisibility = {
+  public: 'public',
+  private: 'private'
+} as const
+
+export type PostVisibility = (typeof PostVisibility)[keyof typeof PostVisibility]
