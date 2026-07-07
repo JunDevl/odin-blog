@@ -1,33 +1,29 @@
 import { Router, type RequestHandler } from "express";
+import { createComment, createPost, deleteComment, deletePost, getPost, getPostComments, getPosts, updateComment } from "../controllers/postsController.ts";
+import passport from "passport";
 
 const postsRouter = Router();
 const commentsRouter = Router();
 
-const verifyJwtToken: RequestHandler = (req, res, next) => {
-
-  return next();
-}
-
-postsRouter.use(verifyJwtToken);
+postsRouter.use(passport.authenticate("jwt", { session: false }));
 
 postsRouter.route("/")
-  .get(() => {}) // get all posts
-  .post(() => {}) // create post
+  .get(getPosts)
+  .post(createPost as RequestHandler[])
 
 postsRouter.route("/:postID")
-  .get(() => {}) // get post
-  .delete(() => {}) // delete post
-  .put(() => {}) // update post
+  .get(getPost)
+  .delete(deletePost)
 
 postsRouter.use("/:postID/comments", commentsRouter);
 
-postsRouter.route("/")
-  .get(() => {}) // get all post comments
-  .post(() => {}) // create post comment
+commentsRouter.route("/")
+  .get(getPostComments)
+  .post(createComment as RequestHandler[])
 
-postsRouter.route("/:commentID")
-  .get(() => {}) // get post comment
-  .delete(() => {}) // delete post comment
-  .put(() => {}) // update post comment
+commentsRouter.route("/:commentID")
+  //.get(() => {}) // get post comment
+  .delete(deleteComment) // delete post comment
+  .put(updateComment as RequestHandler[]) // update post comment
 
 export default postsRouter;

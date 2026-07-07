@@ -10,8 +10,8 @@
 */
 
 export const UserKind = {
-  admin: 'admin',
-  writer: 'writer'
+  reader: 'reader',
+  admin: 'admin'
 } as const
 
 export type UserKind = (typeof UserKind)[keyof typeof UserKind]

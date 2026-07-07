@@ -9,6 +9,7 @@ import Jwt from "passport-jwt";
 import argon2 from "argon2";
 import usersRouter from "./routes/usersRouter.ts";
 import postsRouter from "./routes/postsRouter.ts";
+import type { User } from "./generated/prisma/client.ts";
 
 const __dirname = path.resolve();
 const PORT = process.env["PORT"]!;
@@ -24,21 +25,17 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// TODO:
 passport.use(new Jwt.Strategy(
   {
     jwtFromRequest: Jwt.ExtractJwt.fromAuthHeaderAsBearerToken(),
     secretOrKey: process.env["SECRET_KEY"]!
   },
-  async (jwt_payload, done) => {
+  async (jwt_payload: User, done) => {
     const { email, password } = jwt_payload;
 
     try {
       const user = await prisma.user.findUnique({
-        where: {
-          id: undefined,
-          email
-        }
+        where: { email }
       });
 
       if (!user) return done(null, false, { message: "Incorrect email" });
@@ -48,7 +45,7 @@ passport.use(new Jwt.Strategy(
       if (!validated) return done(null, false, { message: "Incorrect password" });
 
       return done(null, user);
-    } catch(err) {
+    } catch (err) {
       return done(err, false);
     }
 }))

@@ -13,14 +13,14 @@ datasource db {
 }
 
 enum UserKind {
+  reader
   admin
-  writer
 }
 
 model User {
   id       String    @id @default(uuid()) @db.Uuid
   name     String
-  email    String
+  email    String    @unique
   password String
   kind     UserKind
   posts    Post[]
@@ -44,12 +44,12 @@ model Post {
 }
 
 model Comment {
-  id           String   @id @default(uuid()) @db.Uuid
+  id           String    @id @default(uuid()) @db.Uuid
   content      String
-  createdAt    DateTime @default(now())
-  editedAt     DateTime @default(now())
-  originPost   Post     @relation(fields: [originPostId], references: [id])
-  originPostId String   @db.Uuid
-  author       User     @relation(fields: [authorId], references: [id])
-  authorId     String   @db.Uuid
+  createdAt    DateTime  @default(now())
+  editedAt     DateTime? @default(now())
+  originPost   Post      @relation(fields: [originPostId], references: [id])
+  originPostId String    @db.Uuid
+  author       User      @relation(fields: [authorId], references: [id])
+  authorId     String    @db.Uuid
 }
