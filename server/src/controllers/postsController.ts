@@ -56,9 +56,11 @@ export const deletePost: RequestHandler = async (req, res, next) => {
 export const getPost: RequestHandler = async (req, res, next) => {
   const id = Number(req.params.postID);
 
+  const user = req.user as User;
+
   const post = await handleError(prisma.post.findUnique({
     where: { id },
-    select: {
+    select: user.kind !== "admin" ? {
       title: true,
       content: true,
       createdAt: true,
@@ -67,7 +69,7 @@ export const getPost: RequestHandler = async (req, res, next) => {
           name: true
         }
       }
-    }
+    } : null
   }))
 
   if (post instanceof PromiseError) return res.status(400).json(post.error);
@@ -78,11 +80,13 @@ export const getPost: RequestHandler = async (req, res, next) => {
 export const getPosts: RequestHandler = async (req, res, next) => {
   const filter = req.query;
 
+  const user = req.user as User;
+
   const posts = await prisma.post.findMany({
     orderBy: {
       title: "asc"
     },
-    select: {
+    select: user.kind !== "admin" ? {
       title: true,
       content: true,
       createdAt: true,
@@ -91,7 +95,7 @@ export const getPosts: RequestHandler = async (req, res, next) => {
           name: true
         }
       }
-    }
+    } : null
   })
 
   if (posts instanceof PromiseError) return res.status(400).json(posts.error);
@@ -188,7 +192,10 @@ export const deleteComment: RequestHandler = async (req, res, next) => {
 
 export const getPostComments: RequestHandler = async (req, res, next) => {
   const filter = req.query;
+
   const postID = Number(req.params.postID);
+
+  const user = req.user as User;
 
   const comments = await prisma.comment.findMany({
     where: {
@@ -197,7 +204,7 @@ export const getPostComments: RequestHandler = async (req, res, next) => {
     orderBy: {
       createdAt: "asc"
     },
-    select: {
+    select: user.kind !== "admin" ? {
       content: true,
       createdAt: true,
       editedAt: true,
@@ -206,7 +213,7 @@ export const getPostComments: RequestHandler = async (req, res, next) => {
           name: true
         }
       }
-    }
+    } : null
   })
 
   if (comments instanceof PromiseError) return res.status(400).json(comments.error);
