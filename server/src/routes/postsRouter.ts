@@ -1,6 +1,7 @@
 import { Router, type RequestHandler } from "express";
 import { createComment, createPost, deleteComment, deletePost, getPost, getPostComments, getPosts, updateComment } from "../controllers/postsController.ts";
 import passport from "passport";
+import type { User } from "../generated/prisma/client.ts";
 
 const postsRouter = Router();
 const commentsRouter = Router();
