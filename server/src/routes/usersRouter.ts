@@ -1,20 +1,39 @@
 import { Router, type RequestHandler } from "express";
+
 import passport from "passport";
 import jwt from "jsonwebtoken";
+import { JWTProtectedRoute } from "../auth.ts";
+
 import { createUser, deleteUser, getUser, updateUser } from "../controllers/usersController.ts";
+
 import type { User } from "../generated/prisma/client.ts";
 
 const usersRouter = Router();
-const jwtProtected = passport.authenticate("jwt", { session: false });
 
 usersRouter.route("/")
-  .post(createUser as RequestHandler[])
-  .get(jwtProtected, getUser)
-  .delete(jwtProtected, deleteUser)
-  .put(jwtProtected, updateUser as RequestHandler[])
+  .post(createUser as RequestHandler[]);
+
+usersRouter.route("/:userId")
+  .all(JWTProtectedRoute)
+  .get(getUser)
+  .delete(deleteUser)
+  .put(updateUser as RequestHandler[]);
 
 usersRouter.route("/auth")
-  .get((req, res, next) => { // log-in and create new JWT
+  .get((req, res) => {
+    const token = String(req.headers.authorization).split(" ")[1]!;
+
+    jwt.verify(token, process.env["SECRET_KEY"]!, (err, payload) => {
+      if (err) return res.status(400).send(err);
+
+      if (!payload) return res.status(404).sendStatus(404);
+
+      const { id } = payload as User;
+
+      res.redirect(`users/${id}`);
+    })
+  })
+  .post((req, res, next) => { // log-in and create new JWT
     passport.authenticate(
       "local", 
       { session: false }, 
@@ -27,7 +46,6 @@ usersRouter.route("/auth")
           if (err) return res.status(400).send(err);
     
           res.status(201).json({
-            user: user,
             jwt: token
           }); // frontend will recieve jwt token so it can be stored on LocalStorage
         })

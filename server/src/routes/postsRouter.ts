@@ -1,12 +1,14 @@
 import { Router, type RequestHandler } from "express";
-import { createComment, createPost, deleteComment, deletePost, getPost, getPostComments, getPosts, updateComment } from "../controllers/postsController.ts";
+
 import passport from "passport";
-import type { User } from "../generated/prisma/client.ts";
+import { JWTProtectedRoute } from "../auth.ts";
+
+import { createComment, createPost, deleteComment, deletePost, getPost, getPostComments, getPosts, updateComment } from "../controllers/postsController.ts";
 
 const postsRouter = Router();
 const commentsRouter = Router();
 
-postsRouter.use(passport.authenticate("jwt", { session: false }));
+postsRouter.use(JWTProtectedRoute);
 
 postsRouter.route("/")
   .get(getPosts)

@@ -94,7 +94,13 @@ export const updateUser: (RequestHandler | ValidationChain[])[] = [
 
     if (updatedUser instanceof PromiseError) return res.status(400).json(updatedUser.error);
 
-    return res.sendStatus(200);
+    jwt.sign(updatedUser, process.env["SECRET_KEY"]!, {expiresIn: "7d"}, (err, token) => {
+      if (err) return res.status(400).send(err);
+
+      res.status(200).json({
+        jwt: token
+      }); // frontend will recieve jwt token so it can be stored on LocalStorage
+    })
   }
 ]
 
