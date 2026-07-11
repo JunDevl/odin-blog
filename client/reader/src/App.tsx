@@ -1,10 +1,14 @@
-const App = () => {
+import { Outlet } from "react-router";
+import Toolbar from "./components/Toolbar/Toolbar";
+
+const Blog = () => {
 
   return (
     <>
-      <div>hi</div>
+      <Toolbar />
+      <Outlet />
     </>
   )
 }
 
-export default App
+export default Blog

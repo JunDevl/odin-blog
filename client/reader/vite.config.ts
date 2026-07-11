@@ -10,7 +10,8 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@packages/utils": path.resolve(__dirname, "../packages/utils/utils.ts")
+      "@packages/utils": path.resolve(__dirname, "../packages/utils/utils.ts"),
+      "@types": path.resolve(__dirname, "../server/generated/prisma/browser.ts")
     }
   }
 })
