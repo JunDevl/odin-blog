@@ -1,5 +1,3 @@
-import type { UUID } from "node:crypto";
-
 export class PromiseError<T> {
   public error: T;
 

@@ -1,18 +1,20 @@
 import { Router, type RequestHandler } from "express";
 import passport from "passport";
 import jwt from "jsonwebtoken";
-import { createUser } from "../controllers/usersController.ts";
+import { createUser, deleteUser, getUser, updateUser } from "../controllers/usersController.ts";
 import type { User } from "../generated/prisma/client.ts";
 
 const usersRouter = Router();
+const jwtProtected = passport.authenticate("jwt", { session: false });
 
 usersRouter.route("/")
   .post(createUser as RequestHandler[])
-  //.delete(() => {}) // delete user
-  //.put(() => {}) // update user
+  .get(jwtProtected, getUser)
+  .delete(jwtProtected, deleteUser)
+  .put(jwtProtected, updateUser as RequestHandler[])
 
 usersRouter.route("/auth")
-  .get((req, res, next) => {
+  .get((req, res, next) => { // log-in and create new JWT
     passport.authenticate(
       "local", 
       { session: false }, 

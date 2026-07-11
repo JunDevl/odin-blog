@@ -58,19 +58,23 @@ export const getPost: RequestHandler = async (req, res, next) => {
 
   const user = req.user as User;
 
-  const post = await handleError(prisma.post.findUnique({
-    where: { id },
-    select: user.kind !== "admin" ? {
-      title: true,
-      content: true,
-      createdAt: true,
-      author: { 
-        select: {
-          name: true
+  const post = await handleError(user.kind !== "admin" ? 
+    prisma.post.findUnique({
+      where: { id },
+      select: {
+        title: true,
+        content: true,
+        createdAt: true,
+        author: { 
+          select: { name: true }
         }
       }
-    } : null
-  }))
+    }) :
+    prisma.post.findUnique({
+      where: { id },
+      include: { author: true }
+    })
+  )
 
   if (post instanceof PromiseError) return res.status(400).json(post.error);
 
@@ -82,21 +86,23 @@ export const getPosts: RequestHandler = async (req, res, next) => {
 
   const user = req.user as User;
 
-  const posts = await prisma.post.findMany({
-    orderBy: {
-      title: "asc"
-    },
-    select: user.kind !== "admin" ? {
-      title: true,
-      content: true,
-      createdAt: true,
-      author: { 
-        select: {
-          name: true
+  const posts = await handleError(user.kind !== "admin" ? 
+    prisma.post.findMany({
+      orderBy: { title: "asc" },
+      select: {
+        title: true,
+        content: true,
+        createdAt: true,
+        author: { 
+          select: { name: true }
         }
       }
-    } : null
-  })
+    }) :
+    prisma.post.findMany({
+      orderBy: { title: "asc" },
+      include: { author: true }
+    })
+  )
 
   if (posts instanceof PromiseError) return res.status(400).json(posts.error);
 
@@ -197,24 +203,25 @@ export const getPostComments: RequestHandler = async (req, res, next) => {
 
   const user = req.user as User;
 
-  const comments = await prisma.comment.findMany({
-    where: {
-      originPostId: postID
-    },
-    orderBy: {
-      createdAt: "asc"
-    },
-    select: user.kind !== "admin" ? {
-      content: true,
-      createdAt: true,
-      editedAt: true,
-      author: {
-        select: {
-          name: true
+  const comments = await handleError(user.kind !== "admin" ? 
+    prisma.comment.findMany({
+      where: { originPostId: postID },
+      orderBy: { createdAt: "asc" },
+      select: {
+        content: true,
+        createdAt: true,
+        editedAt: true,
+        author: {
+          select: { name: true }
         }
       }
-    } : null
-  })
+    }) :
+    prisma.comment.findMany({
+      where: { originPostId: postID },
+      orderBy: { createdAt: "asc" },
+      include: { author: true }
+    })
+  )
 
   if (comments instanceof PromiseError) return res.status(400).json(comments.error);
 
