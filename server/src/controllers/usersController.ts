@@ -52,7 +52,26 @@ export const createUser: (RequestHandler | ValidationChain[])[] = [
 ]
 
 export const getUser: RequestHandler = async (req, res) => {
-  res.json(req.user);
+  const userID = String(req.params.userID ?? "");
+
+  const user = req.user as User;
+
+  let foundUser = userID ? 
+    await prisma.user.findUnique({
+      where: { id: userID },
+      omit: user.kind !== "admin" ? {
+        password: true,
+        kind: true
+      } : null
+    })
+    : req.user as Partial<User>;
+
+  if (!foundUser) return res.sendStatus(404);
+
+  if (user.kind !== "admin" && !userID) 
+    foundUser = { name: foundUser.name, email: foundUser.email }
+
+  res.json(foundUser);
 }
 
 const updateUserValidator: ValidationChain[] = [
@@ -85,7 +104,7 @@ export const updateUser: (RequestHandler | ValidationChain[])[] = [
       updateUser.password = hashedPassword;
     }
 
-    const id = String(req.params.userId);
+    const id = String(req.params.userID);
 
     const updatedUser = await prisma.user.update({
       data: updateUser,
@@ -105,7 +124,7 @@ export const updateUser: (RequestHandler | ValidationChain[])[] = [
 ]
 
 export const deleteUser: RequestHandler = async (req, res) => {
-  const id = String(req.params.userId);
+  const id = String(req.params.userID);
 
   const deletedUser = await prisma.user.delete({
     where: { id }
@@ -125,7 +144,7 @@ export const deleteUser: RequestHandler = async (req, res) => {
         "password": "$argon2id$v=19$m=65536,t=5,p=4$WKm5gDnh5ZsBxoCvofxYCg$cw8xJn8oCpwKKll+PxJGDtpReJcQPDwRIPX8e6VBZLU",
         "kind": "reader"
     },
-    "jwt": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjFhMTgwYWEzLTNhODctNDBiYi1hNTJjLTI2M2UxNWJmNTQwMSIsIm5hbWUiOiJBcm9sZG8gTWVkaW5hIiwiZW1haWwiOiJhcm9sZG8ubWVkaW5hQGdtYWlsLmNvbSIsInBhc3N3b3JkIjoiJGFyZ29uMmlkJHY9MTkkbT02NTUzNix0PTUscD00JFdLbTVnRG5oNVpzQnhvQ3ZvZnhZQ2ckY3c4eEpuOG9DcHdLS2xsK1B4SkdEdHBSZUpjUVBEd1JJUFg4ZTZWQlpMVSIsImtpbmQiOiJyZWFkZXIiLCJpYXQiOjE3ODMzODM2MTQsImV4cCI6MTc4Mzk4ODQxNH0.A7hKI_26k12858oRnfwvejs7dA-IvQXysZSDkPy-CQ4"
+    "jwt": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjlmZmQ3ZTI1LTYwNmEtNDY5NS04OTliLWE2OTliZmJjMTNhOSIsIm5hbWUiOiJBcm9sZG8gTWVkaW5hIiwiZW1haWwiOiJhcm9sZG8ubWVkaW5hQGdtYWlsLmNvbSIsInBhc3N3b3JkIjoiJGFyZ29uMmlkJHY9MTkkbT02NTUzNix0PTUscD00JDJWamNyS1Q5azNSUGxyY1RHVVVWZmckdFdsODA1REtlZUxndU5qZ013VWdZN0JLVDFVS093YkhCckFiVThGN1lhayIsImtpbmQiOiJyZWFkZXIiLCJpYXQiOjE3ODM3OTkzNTUsImV4cCI6MTc4NDQwNDE1NX0.CHc3A118VIm4vqwoLnZ_GN-y7IwzzC4bnXN1AwLbrzQ"
   }
 
 

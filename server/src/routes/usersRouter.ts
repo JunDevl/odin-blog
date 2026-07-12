@@ -13,26 +13,8 @@ const usersRouter = Router();
 usersRouter.route("/")
   .post(createUser as RequestHandler[]);
 
-usersRouter.route("/:userId")
-  .all(JWTProtectedRoute)
-  .get(getUser)
-  .delete(deleteUser)
-  .put(updateUser as RequestHandler[]);
-
 usersRouter.route("/auth")
-  .get((req, res) => {
-    const token = String(req.headers.authorization).split(" ")[1]!;
-
-    jwt.verify(token, process.env["SECRET_KEY"]!, (err, payload) => {
-      if (err) return res.status(400).send(err);
-
-      if (!payload) return res.status(404).sendStatus(404);
-
-      const { id } = payload as User;
-
-      res.redirect(`users/${id}`);
-    })
-  })
+  .get(JWTProtectedRoute, getUser)
   .post((req, res, next) => { // log-in and create new JWT
     passport.authenticate(
       "local", 
@@ -52,5 +34,11 @@ usersRouter.route("/auth")
       }
     )(req, res, next)
   })
+
+usersRouter.route("/:userID")
+  .all(JWTProtectedRoute)
+  .get(getUser)
+  .delete(deleteUser)
+  .put(updateUser as RequestHandler[]);
 
 export default usersRouter;

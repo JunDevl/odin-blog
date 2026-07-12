@@ -6,27 +6,24 @@ import { JWTProtectedRoute } from "../auth.ts";
 import { createComment, createPost, deleteComment, deletePost, getPost, getPostComments, getPosts, updateComment } from "../controllers/postsController.ts";
 
 const postsRouter = Router();
-const commentsRouter = Router();
 
 postsRouter.use(JWTProtectedRoute);
 
 postsRouter.route("/")
   .get(getPosts)
-  .post(createPost as RequestHandler[])
+  .post(createPost as RequestHandler[]);
 
 postsRouter.route("/:postID")
   .get(getPost)
-  .delete(deletePost)
+  .delete(deletePost);
 
-postsRouter.use("/:postID/comments", commentsRouter);
-
-commentsRouter.route("/")
+postsRouter.route("/:postID/comments")
   .get(getPostComments)
-  .post(createComment as RequestHandler[])
+  .post(createComment as RequestHandler[]);
 
-commentsRouter.route("/:commentID")
+postsRouter.route("/:postID/comments/:commentID")
   //.get(() => {}) // get post comment
   .delete(deleteComment) // delete post comment
-  .put(updateComment as RequestHandler[]) // update post comment
+  .put(updateComment as RequestHandler[]); // update post comment
 
 export default postsRouter;
