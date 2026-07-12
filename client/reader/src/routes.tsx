@@ -5,7 +5,7 @@ import PageNotFound from "./components/PageNotFound/PageNotFound";
 import Posts from "./components/Posts/Posts";
 import ViewingPost from "./components/ViewingPosts/ViewingPosts";
 
-const jwt = localStorage.getItem("userJWT");
+const jwt = localStorage.getItem("jwt");
 
 const routes: RouteObject[] = [
   {
@@ -16,19 +16,19 @@ const routes: RouteObject[] = [
         element: <Navigate to={jwt ? `/blogs` : `/auth`} replace />
       },
       {
-        path: "auth",
+        path: "/auth",
         element: <Auth />
       },
       {
-        path: "blog",
+        path: "/blog",
         element: <Blog />,
         children: [
           {
-            path: "/",
+            index: true,
             element: <Posts />
           },
           {
-            path: "/:postId",
+            path: ":postId",
             element: <ViewingPost />
           }
         ]

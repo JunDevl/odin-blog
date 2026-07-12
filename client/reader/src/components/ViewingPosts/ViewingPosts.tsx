@@ -1,5 +1,5 @@
 import Comments from "../Comments/Comments";
-import { useParams } from "react-router";
+import { Link, useParams } from "react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { fetchPosts } from "../../actions";
 import { Suspense } from "react";
@@ -19,14 +19,17 @@ const ViewingPost = (props: Props) => {
   const post = posts[postId - 1];
 
   return (
-    <main>
+    <main id="post">
+      <Link to={"/blog"}>
+        Go back
+      </Link>
       <Suspense fallback={<p>Loading ...</p>}>
         <h1 className="title">
           {post.title}
         </h1>
         <span className="created">
-          <time dateTime={post.createdAt.toUTCString()}>
-            {post.createdAt.toUTCString()}
+          <time dateTime={post.createdAt}>
+            {post.createdAt}
           </time>
         </span>
         <p className="content">

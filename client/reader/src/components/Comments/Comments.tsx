@@ -16,24 +16,24 @@ const Comments = (props: Props) => {
   })
 
   return (
-    <div className="comments">
+    <div id="comments">
       <form action={(formData) => createPostComment(formData, postId)} className="new_comment">
         <input type="text" name="content" id="content" className="comment"/>
         <button>Comment</button>
       </form>
       <Suspense fallback={<p>Loading...</p>}>
-        {data.map(comment => 
-          <div>
+        {data.map((comment, i) => 
+          <div className="comment" key={i} id={`${i}`}>
             <span className="author">{comment.author.name}</span>
             <span className="created">
-              <time dateTime={comment.createdAt.toUTCString()}>
-                {comment.createdAt.toUTCString()}
+              <time dateTime={comment.createdAt}>
+                {comment.createdAt}
               </time>
             </span>
             {comment.editedAt && 
               <span className="edited">
-                <time dateTime={comment.editedAt.toUTCString()}>
-                  {comment.editedAt.toUTCString()}
+                <time dateTime={comment.editedAt}>
+                  {comment.editedAt}
                 </time>
               </span>
             }

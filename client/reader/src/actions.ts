@@ -1,5 +1,5 @@
 import type { UseSuspenseQueryOptions } from "@tanstack/react-query";
-import type { Comment, Post, User } from "@types";
+import type { PostResponse, CommentResponse, UserResponse } from "./utils";
 
 const HEADERS: HeadersInit = {
   'authorization': `Bearer ${localStorage.getItem("jwt")}`,
@@ -18,34 +18,34 @@ const HEADERS: HeadersInit = {
 // }
 
 export const fetchPosts = async () => {
-  const fetched = await fetch(`${process.env["VITE_API_URL"]!}/posts`, {
+  const fetched = await fetch(`${import.meta.env["VITE_API_URI"]!}/posts`, {
     headers: HEADERS
   });
 
   if (!fetched.ok) throw new Error(await fetched.json());
 
-  const posts: (Post & { author: User })[] = await fetched.json();
+  const posts: PostResponse[] = await fetched.json();
 
   return posts;
 }
 
 export const fetchPostComments = async (postId: number) => {
-  const fetched = await fetch(`${process.env["VITE_API_URL"]!}/posts/${postId}/comments`, {
+  const fetched = await fetch(`${import.meta.env["VITE_API_URI"]!}/posts/${postId}/comments`, {
     headers: HEADERS
   });
 
   if (!fetched.ok) throw new Error(await fetched.json());
 
-  const comments: (Comment & { author: User })[] = await fetched.json();
+  const comments: CommentResponse[] = await fetched.json();
 
   return comments;
 }
 
-export const createPostComment = async (data: FormData, postId: number) => {
-  const fetched = await fetch(`${process.env["VITE_API_URL"]!}/posts/${postId}/comments`, {
+export const createPostComment = async (newComment: FormData, postId: number) => {
+  const fetched = await fetch(`${import.meta.env["VITE_API_URI"]!}/posts/${postId}/comments`, {
     method: "POST",
     headers: HEADERS,
-    body: data
+    body: JSON.stringify(Object.fromEntries(newComment))
   })
 
   if (!fetched.ok) throw new Error(await fetched.json());
@@ -55,11 +55,11 @@ export const createPostComment = async (data: FormData, postId: number) => {
   return ok;
 }
 
-export const updatePostComment = async (data: FormData, postId: number, commentId: number) => {
-  const fetched = await fetch(`${process.env["VITE_API_URL"]!}/posts/${postId}/comments/${commentId}`, {
+export const updatePostComment = async (updatedComment: FormData, postId: number, commentId: number) => {
+  const fetched = await fetch(`${import.meta.env["VITE_API_URI"]!}/posts/${postId}/comments/${commentId}`, {
     method: "PUT",
     headers: HEADERS,
-    body: data
+    body: JSON.stringify(Object.fromEntries(updatedComment))
   })
 
   if (!fetched.ok) throw new Error(await fetched.json());
@@ -70,7 +70,7 @@ export const updatePostComment = async (data: FormData, postId: number, commentI
 }
 
 export const deletePostComment = async (postId: string, commentId: number) => {
-  const fetched = await fetch(`${process.env["VITE_API_URL"]!}/posts/${postId}/comments/${commentId}`, {
+  const fetched = await fetch(`${import.meta.env["VITE_API_URI"]!}/posts/${postId}/comments/${commentId}`, {
     method: "DELETE",
     headers: HEADERS
   })
@@ -82,25 +82,39 @@ export const deletePostComment = async (postId: string, commentId: number) => {
   return ok;
 }
 
-export const fetchUser = async () => {
-  const token = localStorage.getItem("jwt")!;
+export const loginUser = async (auth: FormData) => {
+  const fetched = await fetch(`${import.meta.env["VITE_API_URI"]!}/users/auth`, {
+    method: "POST",
+    headers: HEADERS,
+    body: JSON.stringify(Object.fromEntries(auth))
+  })
 
-  const fetched = await fetch(`${process.env["VITE_API_URL"]!}/users/auth?token=${token}`, {
+  if (!fetched.ok) throw new Error(await fetched.json());
+
+  const { jwt } = await fetched.json() as { jwt: string };
+
+  localStorage.setItem("jwt", jwt);
+
+  return jwt;
+}
+
+export const fetchUser = async () => {
+  const fetched = await fetch(`${import.meta.env["VITE_API_URI"]!}/users/auth`, {
     headers: HEADERS
   });
 
   if (!fetched.ok) throw new Error(await fetched.json());
 
-  const user: User = await fetched.json();
+  const user: UserResponse = await fetched.json();
 
   return user;
 }
 
-export const createUser = async (data: FormData) => {
-  const fetched = await fetch(`${process.env["VITE_API_URL"]!}/users`, {
+export const createUser = async (newUser: FormData) => {
+  const fetched = await fetch(`${import.meta.env["VITE_API_URI"]!}/users`, {
     method: "POST",
     headers: HEADERS,
-    body: data
+    body: JSON.stringify(Object.fromEntries(newUser))
   })
 
   if (!fetched.ok) throw new Error(await fetched.json());
@@ -112,13 +126,11 @@ export const createUser = async (data: FormData) => {
   return jwt;
 }
 
-export const updateUser = async (data: FormData) => {
-  const { id } = await fetchUser();
-
-  const fetched = await fetch(`${process.env["VITE_API_URL"]!}/users/${id}`, {
+export const updateUser = async (updatedUser: FormData, userId: string) => {
+  const fetched = await fetch(`${import.meta.env["VITE_API_URI"]!}/users/${userId}`, {
     method: "PUT",
     headers: HEADERS,
-    body: data
+    body: JSON.stringify(Object.fromEntries(updatedUser))
   })
 
   if (!fetched.ok) throw new Error(await fetched.json());
@@ -130,10 +142,8 @@ export const updateUser = async (data: FormData) => {
   return jwt;
 }
 
-export const deleteUser = async () => {
-  const { id } = await fetchUser();
-
-  const fetched = await fetch(`${process.env["VITE_API_URL"]!}/users/${id}`, {
+export const deleteUser = async (userId: string) => {
+  const fetched = await fetch(`${import.meta.env["VITE_API_URI"]!}/users/${userId}`, {
     method: "DELETE",
     headers: HEADERS
   })
