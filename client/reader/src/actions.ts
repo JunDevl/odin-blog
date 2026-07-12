@@ -50,7 +50,7 @@ export const createPostComment = async (newComment: FormData, postId: number) =>
 
   if (!fetched.ok) throw new Error(await fetched.json());
 
-  const ok = await fetched.json();
+  const ok = await fetched.text();
 
   return ok;
 }
@@ -64,7 +64,7 @@ export const updatePostComment = async (updatedComment: FormData, postId: number
 
   if (!fetched.ok) throw new Error(await fetched.json());
 
-  const ok = await fetched.json();
+  const ok = await fetched.text();
 
   return ok;
 }
@@ -77,7 +77,7 @@ export const deletePostComment = async (postId: string, commentId: number) => {
 
   if (!fetched.ok) throw new Error(await fetched.json());
 
-  const ok = await fetched.json();
+  const ok = await fetched.text();
 
   return ok;
 }
@@ -150,7 +150,7 @@ export const deleteUser = async (userId: string) => {
 
   if (!fetched.ok) throw new Error(await fetched.json());
 
-  const ok = await fetched.json();
+  const ok = await fetched.text();
 
   localStorage.removeItem("jwt");
 

@@ -20,7 +20,7 @@ const ViewingPost = (props: Props) => {
 
   return (
     <main id="post">
-      <Link to={"/blog"}>
+      <Link to="/blog">
         Go back
       </Link>
       <Suspense fallback={<p>Loading ...</p>}>

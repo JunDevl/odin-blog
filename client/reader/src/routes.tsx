@@ -13,7 +13,7 @@ const routes: RouteObject[] = [
     children: [
       {
         index: true,
-        element: <Navigate to={jwt ? `/blogs` : `/auth`} replace />
+        element: <Navigate to={jwt ? `/blog` : `/auth`} replace />
       },
       {
         path: "/auth",

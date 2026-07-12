@@ -88,7 +88,7 @@ export const getPosts: RequestHandler = async (req, res, next) => {
 
   const posts = await handleError(user.kind !== "admin" ? 
     prisma.post.findMany({
-      orderBy: { title: "asc" },
+      orderBy: { createdAt: "desc" },
       select: {
         title: true,
         content: true,
@@ -99,7 +99,7 @@ export const getPosts: RequestHandler = async (req, res, next) => {
       }
     }) :
     prisma.post.findMany({
-      orderBy: { title: "asc" },
+      orderBy: { createdAt: "desc" },
       include: { author: true }
     })
   )
@@ -127,6 +127,7 @@ export const createComment: (RequestHandler | ValidationChain[])[] = [
     const comment: Comment = req.body;
 
     comment.authorId = user.id;
+    comment.originPostId = Number(req.params.postID);
 
     const createdComment = await handleError(prisma.comment.create({ data: comment }));
 
@@ -206,24 +207,39 @@ export const getPostComments: RequestHandler = async (req, res, next) => {
   const comments = await handleError(user.kind !== "admin" ? 
     prisma.comment.findMany({
       where: { originPostId: postID },
-      orderBy: { createdAt: "asc" },
+      orderBy: { createdAt: "desc" },
       select: {
         content: true,
         createdAt: true,
         editedAt: true,
         author: {
-          select: { name: true }
+          select: { id: true, name: true }
         }
       }
     }) :
     prisma.comment.findMany({
       where: { originPostId: postID },
-      orderBy: { createdAt: "asc" },
+      orderBy: { createdAt: "desc" },
       include: { author: true }
     })
-  )
+  ) as PromiseError<any> | (User & { owned?: boolean, author: { id?: string, name: string } })[]
 
   if (comments instanceof PromiseError) return res.status(400).json(comments.error);
+
+  comments.map((comment) => {
+    const authorID = comment.author.id;
+
+    if (user.kind !== "admin") delete comment.author.id;
+
+    if (authorID === user.id) {
+      comment.owned = true;
+      return comment;
+    }
+
+    comment.owned = false;
+
+    return comment;
+  })
 
   return res.json(comments);
 }
