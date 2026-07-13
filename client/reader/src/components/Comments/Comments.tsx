@@ -27,7 +27,7 @@ const Comments = (props: Props) => {
     await createPostComment(formData, postId);
 
     await queryClient.fetchQuery({
-      queryKey: ["comments"]
+      queryKey: ["comments", postId],
     })
   }
 
@@ -38,26 +38,32 @@ const Comments = (props: Props) => {
         <button>Comment</button>
       </form>
       <Suspense fallback={<p>Loading...</p>}>
-        {data.map((comment, i) => 
-          <div className="comment" data-owned={comment.owned} key={i} id={`${i}`}>
-            <span className="author">{comment.author.name}</span>
-            <span className="created">
-              <time dateTime={comment.createdAt}>
-                {comment.createdAt}
-              </time>
-            </span>
-            {comment.editedAt && 
-              <span className="edited">
-                <time dateTime={comment.editedAt}>
-                  {comment.editedAt}
+        {data.map((comment, i) => {
+          const createdAt = new Date(comment.createdAt);
+
+          const editedAt = comment.editedAt ? new Date(comment.editedAt) : null;
+          
+          return (
+            <div className="comment" data-owned={comment.owned} key={i} id={`${i}`}>
+              <span className="author">{comment.author.name}</span>
+              <span className="created">
+                <time dateTime={createdAt.toUTCString()}>
+                  {createdAt.toLocaleDateString()}
                 </time>
               </span>
-            }
-            <p className="content">
-              {comment.content}
-            </p>
-          </div>
-        )}
+              {editedAt && 
+                <span className="edited">
+                  <time dateTime={editedAt.toUTCString()}>
+                    {editedAt.toLocaleDateString()}
+                  </time>
+                </span>
+              }
+              <p className="content">
+                {comment.content}
+              </p>
+            </div>
+          )
+        })}
       </Suspense>
     </div>
   )
