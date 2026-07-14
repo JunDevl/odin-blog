@@ -2,6 +2,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { fetchUser } from "../../actions";
 import "./toolbar.css"
 import { Suspense } from "react";
+import { Link } from "react-router";
 
 type Props = {}
 
@@ -15,8 +16,13 @@ const Toolbar = (props: Props) => {
     <nav id="toolbar">
       <ul>
         <Suspense fallback={<p>Loading ...</p>}>
+          <li className="home">
+            <Link to={"/blog"}>Home</Link>
+          </li>
           <li className="user">
-            {user.name}
+            <Link to={"/profile"}>
+              {user.name}
+            </Link>
           </li>
         </Suspense>
       </ul>

@@ -1,7 +1,9 @@
+import "./comments.css"
+
 import { useParams } from "react-router";
 import { createPostComment, fetchPostComments } from "../../actions";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { Suspense, type SubmitEvent } from "react";
+import { Suspense, useRef, useState, type SubmitEvent } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
 type Props = {}
@@ -11,6 +13,10 @@ const Comments = (props: Props) => {
 
   const params = useParams();
 
+  const input = useRef<HTMLInputElement>(null);
+
+  const [isCreatingComment, setIsCreatingComment] = useState(false);
+
   const postId = Number(params["postId"]);
 
   const { data } = useSuspenseQuery({
@@ -18,23 +24,29 @@ const Comments = (props: Props) => {
     queryFn: () => fetchPostComments(postId)
   })
 
-  const submitForm = async (e: SubmitEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const target = e.target as HTMLFormElement;
-    const formData = new FormData(target);
-
-    await createPostComment(formData, postId);
-
-    await queryClient.fetchQuery({
-      queryKey: ["comments", postId],
-    })
+  const submitForm = (e: SubmitEvent<HTMLFormElement>) => {
+    if (isCreatingComment) 
+      return e.preventDefault();
+    
+    setIsCreatingComment(true);
   }
 
   return (
     <div id="comments">
-      <form className="new_comment" onSubmit={e => submitForm(e)} method="POST">
-        <input type="text" name="content" id="content" className="comment"/>
+      <form id="new_comment" action={async (formData) => {
+        if (isCreatingComment) return;
+
+        await createPostComment(formData, postId);
+
+        await queryClient.fetchQuery({
+          queryKey: ["comments", postId],
+        })
+
+        input.current!.value = "";
+
+        setIsCreatingComment(false);
+      }} onSubmit={submitForm} method="POST">
+        <input type="text" name="content" id="content" ref={input} required/>
         <button>Comment</button>
       </form>
       <Suspense fallback={<p>Loading...</p>}>
@@ -45,19 +57,22 @@ const Comments = (props: Props) => {
           
           return (
             <div className="comment" data-owned={comment.owned} key={i} id={`${i}`}>
-              <span className="author">{comment.author.name}</span>
-              <span className="created">
-                <time dateTime={createdAt.toUTCString()}>
-                  {createdAt.toLocaleDateString()}
-                </time>
-              </span>
-              {editedAt && 
-                <span className="edited">
-                  <time dateTime={editedAt.toUTCString()}>
-                    {editedAt.toLocaleDateString()}
+              <div className="info">
+                <span className="author">{comment.author.name}</span>
+                <span className="created">
+                  <time dateTime={createdAt.toUTCString()}>
+                    {createdAt.toLocaleDateString()}
                   </time>
                 </span>
-              }
+                {editedAt && 
+                  <span className="edited">
+                    Edited: 
+                    <time dateTime={editedAt.toUTCString()}>
+                      {editedAt.toLocaleDateString()}
+                    </time>
+                  </span>
+                }
+              </div>
               <p className="content">
                 {comment.content}
               </p>

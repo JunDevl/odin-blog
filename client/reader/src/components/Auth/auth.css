@@ -1,3 +1,12 @@
+.container:has(#auth) {
+  height: 100dvh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 #auth {
   padding: 2rem;
   border-radius: 10px;

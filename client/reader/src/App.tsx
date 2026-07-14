@@ -1,14 +1,14 @@
 import { Outlet } from "react-router";
 import Toolbar from "./components/Toolbar/Toolbar";
 
-const Blog = () => {
+const App = () => {
 
   return (
     <>
-      <Toolbar />
-      <Outlet />
+      <Toolbar/>
+      <Outlet/>
     </>
   )
 }
 
-export default Blog
+export default App
