@@ -1,0 +1,12 @@
+.title {
+  text-align: center;
+}
+
+.created {
+  text-align: end;
+}
+
+.blog_post {
+  padding: 2rem 3rem;
+  margin-block: 1rem;
+}
