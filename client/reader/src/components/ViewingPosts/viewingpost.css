@@ -1,12 +1,37 @@
-.title {
-  text-align: center;
-}
+#post {
+  & .title {
+    text-align: center;
+  }
 
-.created {
-  text-align: end;
+  & .created {
+    text-align: end;
+  }
 }
 
 .blog_post {
   padding: 2rem 3rem;
   margin-block: 1rem;
+}
+
+#back {
+  color: var(--accent);
+  margin: 1rem;
+  padding: 0.5rem;
+  display: block;
+  max-width: 2rem;
+  border-radius: 0.5rem;
+  transition: all 200ms;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background-color: var(--accent);
+    color: var(--white-1);
+  }
+
+  &:active {
+    background-color: oklch(from var(--accent) calc(l * 0.8) c h);
+    color: oklch(from var(--white-1) calc(l * 0.8) c h);
+  }
 }

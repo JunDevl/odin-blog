@@ -62,6 +62,7 @@ export const getPost: RequestHandler = async (req, res, next) => {
     prisma.post.findUnique({
       where: { id },
       select: {
+        id: true,
         title: true,
         content: true,
         createdAt: true,
@@ -90,6 +91,7 @@ export const getPosts: RequestHandler = async (req, res, next) => {
     prisma.post.findMany({
       orderBy: { createdAt: "desc" },
       select: {
+        id: true,
         title: true,
         content: true,
         createdAt: true,
@@ -209,6 +211,7 @@ export const getPostComments: RequestHandler = async (req, res, next) => {
       where: { originPostId: postID },
       orderBy: { createdAt: "desc" },
       select: {
+        id: true,
         content: true,
         createdAt: true,
         editedAt: true,

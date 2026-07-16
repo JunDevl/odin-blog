@@ -4,6 +4,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { fetchPosts } from "../../actions";
 import { Suspense, type MouseEvent } from "react";
 import { useNavigate } from "react-router";
+import { format } from "date-fns";
 
 type Props = {}
 
@@ -24,16 +25,22 @@ const Posts = (props: Props) => {
   return (
     <main id="blog_posts">
       <Suspense fallback={<p>Loading ...</p>}>
-        {posts.map((post, i) => 
-          <div className="post" key={i} id={`${i}`} onClick={e => handleClick(e)}>
-            <h3 className="title">{post.title}</h3>
-            <span className="author">{post.author.name}</span>
-            <span className="created">
-              <time dateTime={post.createdAt}>
-                {post.createdAt}
-              </time>
-            </span>
-          </div>
+        {posts.map((post, i) => {
+          const createdAt = new Date(post.createdAt)
+
+          return (
+            <div className="post" key={i} id={`${i}`} onClick={e => handleClick(e)}>
+              <h3 className="title">{post.title}</h3>
+              <p className="author">{post.author.name}</p>
+              <p className="created">
+                <time dateTime={post.createdAt}>
+                  {format(createdAt, "P")}
+                </time>
+              </p>
+            </div>
+          )
+        }
+          
         )}
       </Suspense>
     </main>

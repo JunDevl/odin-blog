@@ -2,7 +2,7 @@ import "./auth.css";
 
 import { useState } from "react";
 import { createUser, loginUser } from "../../actions";
-import { Form, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 
 type Props = {}
 

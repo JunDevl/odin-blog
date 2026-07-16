@@ -1,5 +1,5 @@
 #toolbar {
-  background-color: blueviolet;
+  background-color: var(--accent);
   padding: 0.25rem;
 
   &>ul {

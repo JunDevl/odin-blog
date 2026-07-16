@@ -19,8 +19,38 @@
       }
     }
 
-    &>.content {
+    & .content {
       margin-block: 0.5rem;
+    }
+
+    &>.bottom {
+      display: flex;
+      justify-content: space-between;
+    }
+  }
+
+  &>.owned {
+    background-color: var(--dark-4);
+
+    & .delete_comment button {
+      background-color: var(--semantic-error);
+      visibility: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem;
+
+      &:hover {
+        background-color: oklch(from var(--semantic-error) calc(l * 1.4) c h);
+      }
+
+      &:active {
+        background-color: oklch(from var(--semantic-error) calc(l * 0.8) c h);
+      }
+    }
+
+    &:hover .delete_comment button {
+      visibility: visible;
     }
   }
 }
@@ -39,6 +69,7 @@
     text-align: start;
     resize: none;
     border-radius: 1.2rem;
+    font-family: system-ui;
   }
 
   &:focus>:not(.buttons) {
@@ -48,6 +79,7 @@
   &>.buttons {
     display: flex;
     align-self: end;
+    gap: 0.25rem;
   }
 
   & button.hidden {

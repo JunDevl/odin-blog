@@ -1,6 +1,6 @@
 import { Navigate, type RouteObject } from "react-router";
 import App from "./App";
-import Auth from "@shared/components/Auth/Auth";
+import Auth from "./components/Auth/Auth";
 import PageNotFound from "./components/PageNotFound/PageNotFound";
 import Posts from "./components/Posts/Posts";
 import ViewingPost from "./components/ViewingPosts/ViewingPosts";
