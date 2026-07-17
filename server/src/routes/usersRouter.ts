@@ -28,6 +28,7 @@ usersRouter.route("/auth")
           if (err) return res.status(400).send(err);
     
           res.status(201).json({
+            kind: user.kind,
             jwt: token
           }); // frontend will recieve jwt token so it can be stored on LocalStorage
         })

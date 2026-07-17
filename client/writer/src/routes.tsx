@@ -1,27 +1,27 @@
 import { Navigate, type RouteObject } from "react-router";
 import App from "./App";
-import Auth from "./components/Auth/Auth";
-import PageNotFound from "./components/PageNotFound/PageNotFound";
+import Auth from "@shared/components/Auth/Auth";
+import PageNotFound from "@shared/components/PageNotFound/PageNotFound";
+import Profile from "@shared/components/Profile/Profile";
 import Posts from "./components/Posts/Posts";
-import ViewingPost from "./components/ViewingPosts/ViewingPosts";
-import Profile from "./components/Profile/Profile";
+import EditingPost from "./components/EditingPost/EditingPost";
 
 const jwt = localStorage.getItem("jwt");
 
 const routes: RouteObject[] = [
   {
     index: true,
-    element: <Navigate to={jwt ? `/blog` : `/auth`} replace/>
+    element: <Navigate to={jwt ? `/posts` : `/auth`} replace/>
   },
   {
     path: "/auth",
-    element: <Auth/>
+    element: <Auth admin/>
   },
   {
     element: <App/>,
     children: [
       {
-        path: "/blog",
+        path: "/posts",
         children: [
           {
             index: true,
@@ -29,7 +29,7 @@ const routes: RouteObject[] = [
           },
           {
             path: ":postId",
-            element: <ViewingPost />
+            element: <EditingPost/>
           }
         ]
       },

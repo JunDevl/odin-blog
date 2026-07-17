@@ -1,5 +1,5 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { fetchUser } from "../../actions";
+import { fetchUser } from "../../../reader/src/actions";
 import { Suspense } from "react";
 
 type Props = {}

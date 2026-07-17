@@ -4,9 +4,11 @@ import { useState } from "react";
 import { createUser, loginUser } from "../../actions";
 import { useNavigate } from "react-router";
 
-type Props = {}
+type Props = {
+  admin?: boolean
+}
 
-const Auth = (props: Props) => {
+const Auth = ({admin}: Props) => {
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
 
@@ -18,9 +20,14 @@ const Auth = (props: Props) => {
         </h3>
 
         <form action={async (auth) => {
-          const createdJwt = await (isLogin ? loginUser(auth) : createUser(auth));
+          const { kind, jwt } = await (isLogin ? loginUser(auth, admin) : createUser(auth));
 
-          if (createdJwt) navigate("/blog");
+          if (admin && kind === "admin") {
+            navigate("/posts");
+            return;
+          }
+          
+          if (!admin && jwt) navigate("/blog");
 
           throw new Error("Something went wrong");
         }}>

@@ -83,7 +83,7 @@ export const getPost: RequestHandler = async (req, res, next) => {
 }
 
 export const getPosts: RequestHandler = async (req, res, next) => {
-  const filter = req.query;
+  const ownedFilter = Boolean(req.query.owned);
 
   const user = req.user as User;
 
@@ -98,11 +98,17 @@ export const getPosts: RequestHandler = async (req, res, next) => {
         author: { 
           select: { name: true }
         }
-      }
+      },
+      where: ownedFilter ? {
+        authorId: user.id
+      } : undefined
     }) :
     prisma.post.findMany({
       orderBy: { createdAt: "desc" },
-      include: { author: true }
+      include: { author: true },
+      where: ownedFilter ? {
+        authorId: user.id
+      } : undefined
     })
   )
 

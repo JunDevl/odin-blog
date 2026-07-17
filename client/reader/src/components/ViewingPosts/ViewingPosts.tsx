@@ -36,17 +36,17 @@ const ViewingPost = (props: Props) => {
           />
         </svg>
       </Link>
-      <div className="blog_post">
+      <div id="blog_post">
         <Suspense fallback={<p>Loading ...</p>}>
-          <p className="created">
+          <p id="created">
             <time dateTime={createdAt.toUTCString()}>
               {format(createdAt, "P")}
             </time>
           </p>
-          <h1 className="title">
+          <h1 id="title">
             {post.title}
           </h1>
-          <p className="content">
+          <p id="content">
             {post.content}
           </p>
         </Suspense>

@@ -1,10 +1,10 @@
 import { Navigate, type RouteObject } from "react-router";
 import App from "./App";
 import Auth from "@shared/components/Auth/Auth";
-import PageNotFound from "./components/PageNotFound/PageNotFound";
+import PageNotFound from "@shared/components/PageNotFound/PageNotFound";
+import Profile from "@shared/components/Profile/Profile";
 import Posts from "./components/Posts/Posts";
 import ViewingPost from "./components/ViewingPosts/ViewingPosts";
-import Profile from "./components/Profile/Profile";
 
 const jwt = localStorage.getItem("jwt");
 

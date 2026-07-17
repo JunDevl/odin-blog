@@ -1,0 +1,26 @@
+#toolbar {
+  background-color: var(--accent);
+  padding: 0.25rem;
+
+  &>ul {
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: space-between;
+
+    &>li {
+      list-style: none;
+      display: flex;
+      align-items: stretch;
+      justify-content: stretch;
+
+      &>a {
+        padding: 1.5rem;
+
+        &:hover {
+          background-color: aquamarine;
+        }
+      }
+    }
+  }
+}

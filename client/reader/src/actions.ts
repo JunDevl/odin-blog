@@ -1,6 +1,6 @@
 import type { UseSuspenseQueryOptions } from "@tanstack/react-query";
 import type { PostResponse, CommentResponse, UserResponse } from "./utils";
-import { HEADERS } from "../../shared/actions";
+import { headers } from "@shared/actions";
 
 // const QUERIES: Record<string, UseSuspenseQueryOptions> = {
 //   posts: {
@@ -15,7 +15,7 @@ import { HEADERS } from "../../shared/actions";
 
 export const fetchPosts = async () => {
   const fetched = await fetch(`${import.meta.env["VITE_API_URI"]!}/posts`, {
-    headers: HEADERS
+    headers: headers()
   });
 
   if (!fetched.ok) throw new Error(await fetched.json());
@@ -27,7 +27,7 @@ export const fetchPosts = async () => {
 
 export const fetchPostComments = async (postId: number) => {
   const fetched = await fetch(`${import.meta.env["VITE_API_URI"]!}/posts/${postId}/comments`, {
-    headers: HEADERS
+    headers: headers()
   });
 
   if (!fetched.ok) throw new Error(await fetched.json());
@@ -40,7 +40,7 @@ export const fetchPostComments = async (postId: number) => {
 export const createPostComment = async (newComment: FormData, postId: number) => {
   const fetched = await fetch(`${import.meta.env["VITE_API_URI"]!}/posts/${postId}/comments`, {
     method: "POST",
-    headers: HEADERS,
+    headers: headers(),
     body: JSON.stringify(Object.fromEntries(newComment))
   })
 
@@ -54,7 +54,7 @@ export const createPostComment = async (newComment: FormData, postId: number) =>
 export const updatePostComment = async (updatedComment: FormData, postId: number, commentId: number) => {
   const fetched = await fetch(`${import.meta.env["VITE_API_URI"]!}/posts/${postId}/comments/${commentId}`, {
     method: "PUT",
-    headers: HEADERS,
+    headers: headers(),
     body: JSON.stringify(Object.fromEntries(updatedComment))
   })
 
@@ -68,7 +68,7 @@ export const updatePostComment = async (updatedComment: FormData, postId: number
 export const deletePostComment = async (postId: number, commentId: number) => {
   const fetched = await fetch(`${import.meta.env["VITE_API_URI"]!}/posts/${postId}/comments/${commentId}`, {
     method: "DELETE",
-    headers: HEADERS
+    headers: headers()
   })
 
   if (!fetched.ok) throw new Error(await fetched.json());
@@ -80,7 +80,7 @@ export const deletePostComment = async (postId: number, commentId: number) => {
 
 export const fetchUser = async () => {
   const fetched = await fetch(`${import.meta.env["VITE_API_URI"]!}/users/auth`, {
-    headers: HEADERS
+    headers: headers()
   });
 
   if (!fetched.ok) throw new Error(await fetched.json());
@@ -93,7 +93,7 @@ export const fetchUser = async () => {
 export const updateUser = async (updatedUser: FormData, userId: string) => {
   const fetched = await fetch(`${import.meta.env["VITE_API_URI"]!}/users/${userId}`, {
     method: "PUT",
-    headers: HEADERS,
+    headers: headers(),
     body: JSON.stringify(Object.fromEntries(updatedUser))
   })
 
@@ -109,7 +109,7 @@ export const updateUser = async (updatedUser: FormData, userId: string) => {
 export const deleteUser = async (userId: string) => {
   const fetched = await fetch(`${import.meta.env["VITE_API_URI"]!}/users/${userId}`, {
     method: "DELETE",
-    headers: HEADERS
+    headers: headers()
   })
 
   if (!fetched.ok) throw new Error(await fetched.json());

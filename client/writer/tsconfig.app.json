@@ -25,8 +25,9 @@
     "resolvePackageJsonImports": true,
 
     "paths": {
-      "@types": ["../../server/generated/prisma/browser.ts"]
+      "@types": ["../../server/generated/prisma/browser.ts"],
+      "@shared/*": ["../shared/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src", "../shared/components/PageNotFound"]
 }
