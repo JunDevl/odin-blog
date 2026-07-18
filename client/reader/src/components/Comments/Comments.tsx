@@ -72,13 +72,13 @@ const Comments = (props: Props) => {
         </div>
       </form>
       <Suspense fallback={<p>Loading...</p>}>
-        {data.map((comment, i) => {
+        {data.map(comment => {
           const createdAt = new Date(comment.createdAt);
 
           const editedAt = comment.editedAt ? new Date(comment.editedAt) : null;
           
           return (
-            <div className={`comment${ comment.owned ? " owned" : ""}`} key={i} id={`${i}`}>
+            <div className={`comment${ comment.owned ? " owned" : ""}`} key={comment.id} id={`${comment.id}`}>
               <div className="info">
                 <h3 className="author">{comment.author.name}</h3>
                 <span className="created">

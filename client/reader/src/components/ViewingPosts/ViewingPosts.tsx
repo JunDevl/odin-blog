@@ -19,7 +19,7 @@ const ViewingPost = (props: Props) => {
     queryFn: () => fetchPosts()
   });
 
-  const post = posts[postId - 1];
+  const post = posts.find(post => post.id === postId)!;
 
   const createdAt = new Date(post.createdAt);
 

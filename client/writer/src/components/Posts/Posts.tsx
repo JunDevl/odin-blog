@@ -14,13 +14,9 @@ const Posts = (props: Props) => {
   const { data: posts } = useSuspenseQuery({
     queryKey: ["posts"],
     queryFn: () => fetchUserPosts()
-  })
+  });
 
-  const handleClick = (e: MouseEvent<HTMLDivElement>) => {
-    const target = e.target as HTMLDivElement;
-
-    navigate(`${Number(target.id) + 1}`);
-  }
+  const handleClick = async (postID: number) => await navigate(`${postID}`);
 
   return (
     <main id="blog_posts">
@@ -28,11 +24,11 @@ const Posts = (props: Props) => {
         +
       </button>
       <Suspense fallback={<p>Loading ...</p>}>
-        {posts.map((post, i) => {
+        {posts.map(post => {
           const createdAt = new Date(post.createdAt)
 
           return (
-            <div className="post" key={i} id={`${i}`} onClick={handleClick}>
+            <div className="post" key={post.id} id={`${post.id}`} onClick={() => handleClick(post.id)}>
               <h3 className="title">{post.title}</h3>
               <p className="author">{post.author.name}</p>
               <p className="created">

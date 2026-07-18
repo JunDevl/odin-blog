@@ -2,7 +2,7 @@
   padding: 2rem 3rem;
   margin-block: 1rem;
 
-  &>#title {
+  &>.title {
     padding-block: 1rem;
     text-align: center;
   }
@@ -13,6 +13,26 @@
 
   &>:not(.uneditable):hover {
     outline: 1px solid white;
+  }
+}
+
+form#title,
+form#content {
+  display: flex;
+  flex-direction: column;
+
+  &>input,
+  &>textarea {
+    flex: 1;
+  }
+
+  &>input {
+    text-align: center;
+    font-size: 2.2rem;
+  }
+
+  &>textarea {
+    font-size: 1rem;
   }
 }
 

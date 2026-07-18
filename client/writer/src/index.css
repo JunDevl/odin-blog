@@ -114,6 +114,12 @@ textarea:focus {
   outline: 1px solid var(--accent);
 }
 
+textarea {
+  resize: none;
+  font-family: system-ui;
+  field-sizing: content;
+}
+
 svg {
   width: auto;
   height: auto;

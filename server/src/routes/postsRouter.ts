@@ -3,7 +3,7 @@ import { Router, type RequestHandler } from "express";
 import passport from "passport";
 import { JWTProtectedRoute } from "../auth.ts";
 
-import { createComment, createPost, deleteComment, deletePost, getPost, getPostComments, getPosts, updateComment } from "../controllers/postsController.ts";
+import { createComment, createPost, deleteComment, deletePost, getPost, getPostComments, getPosts, updateComment, updatePost } from "../controllers/postsController.ts";
 
 const postsRouter = Router();
 
@@ -15,7 +15,8 @@ postsRouter.route("/")
 
 postsRouter.route("/:postID")
   .get(getPost)
-  .delete(deletePost);
+  .delete(deletePost)
+  .put(updatePost as RequestHandler[]);
 
 postsRouter.route("/:postID/comments")
   .get(getPostComments)

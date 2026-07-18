@@ -1,5 +1,5 @@
 import type { RequestHandler } from "express";
-import { body, validationResult, type ValidationChain } from "express-validator";
+import { body, matchedData, validationResult, type ValidationChain } from "express-validator";
 import { handleError, PromiseError } from "@packages/utils";
 import type { Comment, Post, User } from "../../generated/prisma/client.ts";
 import prisma from "../../lib/prisma.ts";
@@ -27,13 +27,49 @@ export const createPost: (RequestHandler | ValidationChain[])[] = [
 
     if (user.kind !== "admin") return res.status(403).send("Readers aren't allowed to create posts.");
 
-    const post: Post = req.body;
+    const post: Post = matchedData(req);
 
     post.authorId = user.id;
 
     const createdPost = await handleError(prisma.post.create({ data: post }));
 
     if (createdPost instanceof PromiseError) return res.status(400).json(createdPost.error);
+
+    return res.sendStatus(201);
+  }
+]
+
+const updatePostValidator: ValidationChain[] = [
+  body("title")
+    .optional({values: "null"})
+    .trim(),
+  body("content")
+    .optional({values: "null"})
+    .trim(),
+  body("visibility")
+    .optional({values: "null"})
+    .trim(),
+]
+
+export const updatePost: (RequestHandler | ValidationChain[])[] = [
+  updatePostValidator,
+  async (req, res, next) => {
+    const validationErrors = validationResult(req);
+
+    if (!validationErrors.isEmpty()) return res.status(400).json(validationErrors.array());
+
+    const user = req.user as User;
+
+    if (user.kind !== "admin") return res.status(403).send("Readers aren't allowed to update posts.");
+
+    const postID = Number(req.params.postID);
+    const post: Post = matchedData(req);
+
+    const updatedPost = await handleError(
+      prisma.post.update({ data: post, where: { id: postID, authorId: user.id } })
+    );
+
+    if (updatedPost instanceof PromiseError) return res.status(400).json(updatedPost.error);
 
     return res.sendStatus(201);
   }
@@ -132,7 +168,7 @@ export const createComment: (RequestHandler | ValidationChain[])[] = [
 
     const user: User = req.user as User;
 
-    const comment: Comment = req.body;
+    const comment: Comment = matchedData(req);
 
     comment.authorId = user.id;
     comment.originPostId = Number(req.params.postID);
@@ -160,7 +196,7 @@ export const updateComment: (RequestHandler | ValidationChain[])[] = [
 
     if (!validationErrors.isEmpty()) return res.status(400).json(validationErrors.array());
 
-    const { id, content } = req.body as Comment;
+    const { id, content } = matchedData(req) as Comment;
 
     const user = req.user as User;
     const author = await handleError(prisma.comment.findUnique({ where: { id }, select: { authorId: true } }))

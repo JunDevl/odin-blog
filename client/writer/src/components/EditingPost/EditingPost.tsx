@@ -1,14 +1,17 @@
 import "./editingpost.css";
 
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { Link, useParams } from "react-router";
 import { fetchPosts } from "../../../../reader/src/actions";
-import { Suspense, useState } from "react";
+import { Suspense, useState, type SubmitEvent } from "react";
 import { format } from "date-fns";
+import { updatePost } from "../../actions";
 
 type Props = {}
 
 const EditingPost = (props: Props) => {
+  const queryClient = useQueryClient();
+
   const params = useParams();
 
   const postId = Number(params["postId"]);
@@ -18,11 +21,19 @@ const EditingPost = (props: Props) => {
     queryFn: () => fetchPosts()
   });
 
-  const post = posts[postId - 1];
+  const post = posts.find(post => post.id = postId)!;
 
+  const [isEditingPost, setIsEditingPost] = useState(false);
   const [editing, setEditing] = useState<"title" | "content" | null>(null);
 
   const createdAt = new Date(post.createdAt);
+
+  const submitForm = (e: SubmitEvent<HTMLFormElement>) => {
+    if (isEditingPost) 
+      return e.preventDefault();
+    
+    setIsEditingPost(true);
+  }
 
   return (
     <main id="post">
@@ -45,26 +56,56 @@ const EditingPost = (props: Props) => {
             </time>
           </p>
           {editing === "title" ? 
-            <form action="">
-              <input type="text" name="title" id="title" value={post.title}/>
+            <form 
+              className="title" 
+              action={async formData => {
+                if (isEditingPost) return;
+
+                await updatePost(formData, postId);
+
+                await queryClient.fetchQuery({
+                  queryKey: ["posts"]
+                })
+
+                setEditing(null);
+                setIsEditingPost(false);
+              }} 
+              onSubmit={submitForm}
+            >
+              <input type="text" name="title" id="title" defaultValue={post.title}/>
               <div className="buttons">
                 <button type="reset" onClick={() => setEditing(null)}>Cancel</button>
                 <button type="submit">Edit</button>
               </div>
             </form> :
-            <h1 id="title" onClick={() => setEditing("title")}>
+            <h1 className="title" onClick={() => setEditing("title")}>
               {post.title}
             </h1>
           }
           {editing === "content" ? 
-            <form action="">
-              <textarea name="content" id="content" value={post.content}/>
+            <form 
+              className="content" 
+              action={async formData => {
+                if (isEditingPost) return;
+
+                await updatePost(formData, postId);
+
+                await queryClient.fetchQuery({
+                  queryKey: ["posts"]
+                })
+
+                setEditing(null);
+                setIsEditingPost(false);
+              }} 
+              onSubmit={submitForm}
+            >
+              <textarea name="content" id="content" defaultValue={post.content}/>
               <div className="buttons">
                 <button type="reset" onClick={() => setEditing(null)}>Cancel</button>
                 <button type="submit">Edit</button>
               </div>
             </form> :
-            <p id="content" onClick={() => setEditing("content")}>
+            <p className="content" onClick={() => setEditing("content")}>
               {post.content}
             </p>
           }
